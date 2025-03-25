@@ -1,5 +1,6 @@
 (ns il-to-ld.il-parser
   (:require [instaparse.core :as insta]
+            [instaparse.transform :as transform]
             [clojure.spec.alpha :as s]
             [clojure.string :as str]))
 
@@ -58,7 +59,7 @@
 
 ;; Function to transform parsed IL to an intermediate representation
 (defn transform-il [parsed]
-  (insta/transform
+  (transform/transform
    {:instruction (fn [& args]
                    (let [parts (apply hash-map (flatten (filter vector? args)))]
                      {:label (get parts :label)
