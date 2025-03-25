@@ -1,0 +1,40 @@
+# resources/example.il
+LD X0
+AND X1
+OR X2
+ST Y0
+
+LD X3
+ANDN X4
+ST Y1
+
+LD X5
+S M0
+LD X6
+R M0
+
+# resources/example.ld
+<?xml version="1.0" encoding="UTF-8"?>
+<ladder>
+<network>
+  <contact name="X0" />
+  <contact name="X1" />
+  <branch>
+    <contact name="X2" />
+  </branch>
+  <coil name="Y0" />
+</network>
+<network>
+  <contact name="X3" />
+  <contact name="X4" negated="true" />
+  <coil name="Y1" />
+</network>
+<network>
+  <contact name="X5" />
+  <coil name="M0" set="true" />
+</network>
+<network>
+  <contact name="X6" />
+  <coil name="M0" reset="true" />
+</network>
+</ladder>
