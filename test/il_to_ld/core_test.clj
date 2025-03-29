@@ -1,7 +1,7 @@
 (ns il-to-ld.core-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [il-to-ld.core :as core]
-            [il-to-ld.il-parser :as il-parser]
+            [il-to-ld.il-parser :refer [il-parser transform-il]]
             [il-to-ld.ld-parser :as ld-parser]
             [instaparse.core :as insta]
             [clojure.string :as str]))
@@ -9,13 +9,13 @@
 (deftest parse-il-test
   (testing "Basic IL parsing"
     (let [il-code "LD X0\nAND X1\nST Y0"]
-      (is (not (insta/failure? (il-parser/il-parser il-code)))))))
+      (is (not (insta/failure? (il-parser il-code)))))))
 
 (deftest transform-il-test
   (testing "Transform IL to intermediate representation"
     (let [il-code "LD X0\nAND X1\nST Y0"
-          parsed (il-parser/il-parser il-code)
-          transformed (il-parser/transform-il parsed)]
+          parsed (il-parser il-code)
+          transformed (transform-il parsed)]
       (is (= (count transformed) 3))
       (is (= (:operator (first transformed)) "LD"))
       (is (= (:operand (first transformed)) "X0")))))
@@ -48,7 +48,7 @@
     (let [original-il "LD X0\nAND X1\nST Y0"
           ld-xml (core/compile-il-to-ld original-il)
           result-il (core/compile-ld-to-il ld-xml)]
-      (is (= (str/trim original-il) 
+      (is (= (str/trim original-il)
              (str/trim result-il))))))
 
 (deftest branch-conversion-test
@@ -63,7 +63,7 @@
     (let [il-code "LD X0\nANDN X1\nST Y0"
           ld-xml (core/compile-il-to-ld il-code)]
       (is (.contains ld-xml "negated=\"true\""))
-      
+
       (let [negated-ld "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <ladder>
 <network>
@@ -81,7 +81,7 @@
           ld-xml (core/compile-il-to-ld il-code)]
       (is (.contains ld-xml "set=\"true\""))
       (is (.contains ld-xml "reset=\"true\""))
-      
+
       (let [sr-ld "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <ladder>
 <network>
